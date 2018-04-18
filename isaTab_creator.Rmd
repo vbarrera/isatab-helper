@@ -1,0 +1,48 @@
+---
+title: "Differential Expression"
+author: "`r getOption('author')`"
+date: "`r Sys.Date()`"
+bibliography: bibliography.bib
+params:
+    yamlFile: "./test_data/rnaseq_fed_fasting_refed.yaml"
+    bcbFile: "./test_data/bcb.rda"
+    outputDir: "."
+---
+
+```{r check-library-functions, echo=FALSE, message=FALSE}
+check_install = function(packages) {
+   not_installed = setdiff(packages, rownames(installed.packages()))
+   if (length(not_installed) > 0) {
+      write(paste("The libraries", not_installed, "are not installed, aborting.",
+                   sep = " "), stderr())
+      stop()
+   }
+}
+```
+
+```{r load-libraries, echo=FALSE, message=FALSE}
+packages = c("bcbioRNASeq","stringr","yaml")
+check_install(packages)
+installed = lapply(packages, library, character.only = TRUE)
+```
+
+```{r}
+yaml_info <- yaml.load_file("test_data/rnaseq_fed_fasting_refed.yaml")
+
+yaml_df <- data.frame(filename = character(), description= character())
+
+lapply(yaml_info$details,function(x))
+
+```
+
+
+
+```{r}
+# Load bcbioRNASeq object
+bcbName <- load(params$bcbFile)
+bcb <- get(bcbName, inherits = FALSE)
+
+bcb <- updateObject(bcb)
+summarydata <- colData(bcb)
+bcb@metadata$bcbioCommandsLog[grepl("fastq",bcb@metadata$bcbioCommandsLog)] %>% str_extract(pattern = '\\/.*\\.fastq')
+```
